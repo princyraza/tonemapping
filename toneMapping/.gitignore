@@ -1,5 +1,5 @@
 /bin
-.DS_Store
+src/.DS_Store
 toneMapping/.DS_Store
 toneMapping/.classpath
 toneMapping/.project
