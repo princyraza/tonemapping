@@ -51,6 +51,8 @@ public class MainFrame extends JFrame implements Observer
 		JLabel image = new JLabel(imgIcon);
 		imagePanel.add(image);
 		
+		int i =0;
+		
 	}
 
 	@Override
