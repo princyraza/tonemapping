@@ -30,9 +30,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+
+import controler.Controller;
 
 public class MainFrame extends JFrame implements Observer
 {
+	Controller ctrl;
+	
 	public static final int DEFAULT_WIDTH = 800;
     public static final int DEFAULT_HEIGHT = 600;
     
@@ -68,10 +74,19 @@ public class MainFrame extends JFrame implements Observer
 		rightPanel.add(contrastLabel);
 		
 		brightSlider = new JSlider();
+		brightSlider.setMaximum(100);
+		brightSlider.setMinimum(0);
+		brightSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+			    int beta = (int)source.getValue();
+			    ctrl.setBrightness(beta);
+			}
+		});
 		brightSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 		rightPanel.add(brightSlider);
 		
-		imgIcon = new ImageIcon("/Users/Princy/git/tonemapping/toneMapping/ressources/lena.png");
+		imgIcon = new ImageIcon();
 		image = new JLabel(imgIcon);
 		imagePanel.add(image);
 		
@@ -91,6 +106,7 @@ public class MainFrame extends JFrame implements Observer
 				int returnVal = fc.showOpenDialog(MainFrame.this);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            File file = fc.getSelectedFile();
+		            ctrl.setOriginalImage(file.getAbsolutePath());
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {
@@ -106,11 +122,27 @@ public class MainFrame extends JFrame implements Observer
 		menu.add(openImage);
 		
 	}
+	
+	
+
+	public Controller getCtrl() {
+		return ctrl;
+	}
+
+
+
+	public void setCtrl(Controller ctrl) {
+		this.ctrl = ctrl;
+	}
+
+
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
+	public void update(Observable observable, Object arg1) {
+		image.setIcon(new ImageIcon("ressources/newImage.png"));
+		File newImage = new File("ressources/newImage.png");
+		ctrl.setOriginalImage("ressources/newImage.png");
+		//newImage.delete();
 	}
 	
 
