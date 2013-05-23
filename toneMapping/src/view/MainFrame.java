@@ -76,7 +76,8 @@ public class MainFrame extends JFrame implements Observer
 		
 		brightSlider = new JSlider();
 		brightSlider.setMaximum(100);
-		brightSlider.setMinimum(0);
+		brightSlider.setMinimum(-100);
+		brightSlider.setValue(0);
 		brightSlider.setEnabled(false);
 		brightSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -110,6 +111,7 @@ public class MainFrame extends JFrame implements Observer
 		            File file = fc.getSelectedFile();
 		            ctrl.setOriginalImage(file.getAbsolutePath());
 		            brightSlider.setEnabled(true);
+		            brightSlider.setValue(0);
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {
