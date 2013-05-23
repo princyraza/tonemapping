@@ -28,6 +28,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.event.ChangeListener;
@@ -76,6 +77,7 @@ public class MainFrame extends JFrame implements Observer
 		brightSlider = new JSlider();
 		brightSlider.setMaximum(100);
 		brightSlider.setMinimum(0);
+		brightSlider.setEnabled(false);
 		brightSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider)e.getSource();
@@ -107,6 +109,7 @@ public class MainFrame extends JFrame implements Observer
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            File file = fc.getSelectedFile();
 		            ctrl.setOriginalImage(file.getAbsolutePath());
+		            brightSlider.setEnabled(true);
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {
@@ -139,10 +142,11 @@ public class MainFrame extends JFrame implements Observer
 
 	@Override
 	public void update(Observable observable, Object arg1) {
-		image.setIcon(new ImageIcon("ressources/newImage.png"));
-		File newImage = new File("ressources/newImage.png");
-		ctrl.setOriginalImage("ressources/newImage.png");
-		//newImage.delete();
+		BufferedImage newImage = (BufferedImage) arg1;
+		image.setIcon(new ImageIcon(newImage));
+//		File newImage = new File("ressources/newImage.png");
+//		ctrl.setOriginalImage("ressources/newImage.png");
+//		newImage.delete();
 	}
 	
 
