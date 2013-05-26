@@ -63,4 +63,9 @@ public class Controller {
 		toneMapping.setBrightness(beta);
 	}
 
+	public void setContrast(double alpha) {
+		toneMapping.setContrast(alpha);
+		
+	}
+
 }

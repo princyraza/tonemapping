@@ -46,12 +46,14 @@ public class MainFrame extends JFrame implements Observer
     private JPanel imagePanel;
     private JPanel topMenu;
     private JPanel rightPanel;
-    private JLabel contrastLabel;
+    private JLabel brightnessLabel;
     private JSlider brightSlider;
     private ImageIcon imgIcon;
     private JLabel image;
     private JMenuBar menuBar;
     private JMenu menu;
+    private JLabel lblContrast;
+    private JSlider sliderContrast;
     
 	public MainFrame() {
 		
@@ -70,9 +72,9 @@ public class MainFrame extends JFrame implements Observer
 		getContentPane().add(rightPanel, BorderLayout.EAST);
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 		
-		contrastLabel = new JLabel("Brightness");
-		contrastLabel.setAlignmentY(Component.LEFT_ALIGNMENT);
-		rightPanel.add(contrastLabel);
+		brightnessLabel = new JLabel("Brightness");
+		brightnessLabel.setAlignmentY(Component.LEFT_ALIGNMENT);
+		rightPanel.add(brightnessLabel);
 		
 		brightSlider = new JSlider();
 		brightSlider.setMaximum(100);
@@ -88,6 +90,24 @@ public class MainFrame extends JFrame implements Observer
 		});
 		brightSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 		rightPanel.add(brightSlider);
+		
+		lblContrast = new JLabel("Contrast");
+		rightPanel.add(lblContrast);
+		
+		sliderContrast = new JSlider();
+		sliderContrast.setMinimum(0);
+		sliderContrast.setMaximum(200);
+		sliderContrast.setValue(100);
+		sliderContrast.setEnabled(false);
+		sliderContrast.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+			    double alpha = (double)source.getValue()/100;
+			    ctrl.setContrast(alpha);
+			}
+		});
+		sliderContrast.setAlignmentX(Component.LEFT_ALIGNMENT);
+		rightPanel.add(sliderContrast);
 		
 		imgIcon = new ImageIcon();
 		image = new JLabel(imgIcon);
@@ -112,6 +132,8 @@ public class MainFrame extends JFrame implements Observer
 		            ctrl.setOriginalImage(file.getAbsolutePath());
 		            brightSlider.setEnabled(true);
 		            brightSlider.setValue(0);
+		            sliderContrast.setEnabled(true);
+		            sliderContrast.setValue(100);
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {
@@ -125,7 +147,6 @@ public class MainFrame extends JFrame implements Observer
 			}
 		});
 		menu.add(openImage);
-		
 	}
 	
 	
@@ -146,9 +167,6 @@ public class MainFrame extends JFrame implements Observer
 	public void update(Observable observable, Object arg1) {
 		BufferedImage newImage = (BufferedImage) arg1;
 		image.setIcon(new ImageIcon(newImage));
-//		File newImage = new File("ressources/newImage.png");
-//		ctrl.setOriginalImage("ressources/newImage.png");
-//		newImage.delete();
 	}
 	
 

@@ -73,20 +73,25 @@ public class ToneMapping extends Observable {
 
 	public void setBrightness(int beta) {
 		
-		double alpha=1; //contrast not changed
-//	    double[] oldData=new double[3];
-//	    double[] newData=new double[3];
-	    // Load the native library.
+		double alpha=1;
 	    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	    
 		Mat newImage = new Mat(originalImage.size(), originalImage.type());
 		System.out.println(beta);
 		originalImage.convertTo(newImage, originalImage.type(),alpha,beta);
-		
-//	    String filename = "ressources/newImage.png";
-//	    Highgui.imwrite(filename, newImage);
 	    setChanged();
 	    notifyObservers(matToBufferedImage(newImage));
+	}
+
+	public void setContrast(double alpha) {
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+	    
+		Mat newImage = new Mat(originalImage.size(), originalImage.type());
+		System.out.println(alpha);
+		originalImage.convertTo(newImage, originalImage.type(),alpha);
+	    setChanged();
+	    notifyObservers(matToBufferedImage(newImage));
+		
 	}
 	
 	
