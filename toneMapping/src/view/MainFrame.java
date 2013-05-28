@@ -34,7 +34,7 @@ import java.io.IOException;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import controler.Controller;
+import controller.Controller;
 
 public class MainFrame extends JFrame implements Observer
 {
