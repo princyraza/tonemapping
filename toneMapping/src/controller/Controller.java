@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 
 import view.MainFrame;
@@ -14,26 +15,9 @@ import model.*;
 
 public class Controller {
 	private ToneMapping toneMapping;
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-	    System.out.println("Hello, OpenCV");
-	    double alpha=2;
-	    int beta=0;
-	    double[] oldData=new double[3];
-	    double[] newData=new double[3];
-	    // Load the native library.
-	    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	    
-		Mat image = Highgui.imread("/Users/Princy/Documents/workspace/opencvjava/src/lena.png");
-		Mat newImage = new Mat(image.size(), image.type());
-		image.convertTo(newImage, image.type(),alpha,beta);
-		// Save the visualized detection.
-	    String filename = "newImage.png";
-	    System.out.println(String.format("Writing %s", filename));
-	    Highgui.imwrite(filename, newImage);
-	}
+	private int beta = 0;
+	private double alpha = 1;
+	private double radius = 0;
 	
 	public Controller()
 	{
@@ -58,14 +42,54 @@ public class Controller {
 		toneMapping.setOriginalImage(image);
 	}
 	
-	public void setBrightness(int beta)
-	{
-		toneMapping.setBrightness(beta);
+	public int getBeta() {
+		return beta;
 	}
 
-	public void setContrast(double alpha) {
-		toneMapping.setContrast(alpha);
-		
+
+	public void setBeta(int beta) {
+		this.beta = beta;
+	}
+
+
+	public double getAlpha() {
+		return alpha;
+	}
+
+
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+	}
+
+
+	public double getRadius() {
+		return radius;
+	}
+
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+
+//	public void setBrightness(int beta)
+//	{
+//		toneMapping.setBrightness(beta);
+//	}
+//
+//	public void setContrast(double alpha) {
+//		toneMapping.setContrast(alpha);
+//	}
+//	
+//	public void boxFilter(double radius)
+//	{
+//		Size ksize = new Size(radius, radius);
+//		toneMapping.boxFilter(ksize);
+//	}
+//	
+	public void applySettings()
+	{
+		toneMapping.applySettings(alpha, beta, radius);
 	}
 
 }

@@ -1,38 +1,30 @@
 package view;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.MenuItem;
-
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JLabel;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import java.awt.Component;
-import java.awt.event.KeyEvent;
-
-import javax.swing.SwingConstants;
-import javax.swing.JToolBar;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import controller.Controller;
 
@@ -53,7 +45,9 @@ public class MainFrame extends JFrame implements Observer
     private JMenuBar menuBar;
     private JMenu menu;
     private JLabel lblContrast;
-    private JSlider sliderContrast;
+    private JSlider contrastSlider;
+    private JLabel boxFliterlabel;
+    private JSlider boxFilterSlider;
     
 	public MainFrame() {
 		
@@ -85,7 +79,8 @@ public class MainFrame extends JFrame implements Observer
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider)e.getSource();
 			    int beta = (int)source.getValue();
-			    ctrl.setBrightness(beta);
+			    ctrl.setBeta(beta);
+			    ctrl.applySettings();
 			}
 		});
 		brightSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -94,20 +89,40 @@ public class MainFrame extends JFrame implements Observer
 		lblContrast = new JLabel("Contrast");
 		rightPanel.add(lblContrast);
 		
-		sliderContrast = new JSlider();
-		sliderContrast.setMinimum(0);
-		sliderContrast.setMaximum(200);
-		sliderContrast.setValue(100);
-		sliderContrast.setEnabled(false);
-		sliderContrast.addChangeListener(new ChangeListener() {
+		contrastSlider = new JSlider();
+		contrastSlider.setMinimum(0);
+		contrastSlider.setMaximum(200);
+		contrastSlider.setValue(100);
+		contrastSlider.setEnabled(false);
+		contrastSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider)e.getSource();
 			    double alpha = (double)source.getValue()/100;
-			    ctrl.setContrast(alpha);
+			    ctrl.setAlpha(alpha);
+			    ctrl.applySettings();
 			}
 		});
-		sliderContrast.setAlignmentX(Component.LEFT_ALIGNMENT);
-		rightPanel.add(sliderContrast);
+		contrastSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+		rightPanel.add(contrastSlider);
+		
+		boxFliterlabel = new JLabel("Box FIlter");
+		rightPanel.add(boxFliterlabel);
+		
+		boxFilterSlider = new JSlider();
+		boxFilterSlider.setValue(0);
+		boxFilterSlider.setMinimum(0);
+		boxFilterSlider.setMaximum(200);
+		boxFilterSlider.setEnabled(false);
+		boxFilterSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				double radius = (double)source.getValue();
+				ctrl.setRadius(radius);
+				ctrl.applySettings();
+			}
+		});
+		boxFilterSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+		rightPanel.add(boxFilterSlider);
 		
 		imgIcon = new ImageIcon();
 		image = new JLabel(imgIcon);
@@ -132,8 +147,9 @@ public class MainFrame extends JFrame implements Observer
 		            ctrl.setOriginalImage(file.getAbsolutePath());
 		            brightSlider.setEnabled(true);
 		            brightSlider.setValue(0);
-		            sliderContrast.setEnabled(true);
-		            sliderContrast.setValue(100);
+		            contrastSlider.setEnabled(true);
+		            contrastSlider.setValue(100);
+		            boxFilterSlider.setEnabled(true);
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {

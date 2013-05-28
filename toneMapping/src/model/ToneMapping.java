@@ -5,7 +5,9 @@ import java.util.Observable;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
 
 public class ToneMapping extends Observable {
 	
@@ -71,28 +73,55 @@ public class ToneMapping extends Observable {
 	    return image;
 	}
 
-	public void setBrightness(int beta) {
-		
+	public Mat setBrightness(Mat image, int beta) {
+		Mat newImage = new Mat(originalImage.size(), originalImage.type());
 		double alpha=1;
 	    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	    
-		Mat newImage = new Mat(originalImage.size(), originalImage.type());
 		System.out.println(beta);
-		originalImage.convertTo(newImage, originalImage.type(),alpha,beta);
-	    setChanged();
-	    notifyObservers(matToBufferedImage(newImage));
+		image.convertTo(newImage, image.type(),alpha,beta);
+		Highgui.imwrite("newImage.png", newImage);
+		return newImage;
+//	    setChanged();
+//	    notifyObservers(matToBufferedImage(newImage));
 	}
 
-	public void setContrast(double alpha) {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	    
+	public Mat setContrast(Mat image, double alpha) {
 		Mat newImage = new Mat(originalImage.size(), originalImage.type());
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		System.out.println(alpha);
-		originalImage.convertTo(newImage, originalImage.type(),alpha);
-	    setChanged();
-	    notifyObservers(matToBufferedImage(newImage));
-		
+		image.convertTo(newImage, image.type(),alpha);
+		Highgui.imwrite("newImage.png", newImage);
+		return newImage;
+//	    setChanged();
+//	    notifyObservers(matToBufferedImage(newImage));
 	}
+	
+	public Mat boxFilter(Mat image, Size ksize)
+	{
+		if(ksize.height>0 || ksize.width>0)
+		{
+			Mat newImage = new Mat(originalImage.size(), originalImage.type());
+			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+			Imgproc.boxFilter(image, newImage, image.depth(), ksize);
+			Highgui.imwrite("newImage.png", newImage);
+			return newImage;
+		}
+		return image;
+//		setChanged();
+//		notifyObservers(matToBufferedImage(newImage));
+	}
+	
+	public void applySettings(double alpha, int beta, double radius)
+	{
+		Mat image = setContrast(originalImage, alpha);
+		image = setBrightness(image, beta);
+		Size ksize = new Size(radius, radius);
+		image = boxFilter(image, ksize);
+		setChanged();
+		notifyObservers(matToBufferedImage(image));
+	}
+	
+	
 	
 	
 
