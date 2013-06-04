@@ -77,23 +77,19 @@ public class ToneMapping extends Observable {
 		Mat newImage = new Mat(originalImage.size(), originalImage.type());
 		double alpha=1;
 	    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		System.out.println(beta);
+		System.out.println("beta: "+beta);
 		image.convertTo(newImage, image.type(),alpha,beta);
-		Highgui.imwrite("newImage.png", newImage);
+//		Highgui.imwrite("newImage.png", newImage);
 		return newImage;
-//	    setChanged();
-//	    notifyObservers(matToBufferedImage(newImage));
 	}
 
 	public Mat setContrast(Mat image, double alpha) {
 		Mat newImage = new Mat(originalImage.size(), originalImage.type());
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		System.out.println(alpha);
+		System.out.println("alpha: "+alpha);
 		image.convertTo(newImage, image.type(),alpha);
-		Highgui.imwrite("newImage.png", newImage);
+//		Highgui.imwrite("newImage.png", newImage);
 		return newImage;
-//	    setChanged();
-//	    notifyObservers(matToBufferedImage(newImage));
 	}
 	
 	public Mat boxFilter(Mat image, Size ksize)
@@ -102,21 +98,35 @@ public class ToneMapping extends Observable {
 		{
 			Mat newImage = new Mat(originalImage.size(), originalImage.type());
 			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+			System.out.println("box radius:"+ksize);
 			Imgproc.boxFilter(image, newImage, image.depth(), ksize);
-			Highgui.imwrite("newImage.png", newImage);
+//			Highgui.imwrite("newImage.png", newImage);
 			return newImage;
 		}
 		return image;
-//		setChanged();
-//		notifyObservers(matToBufferedImage(newImage));
 	}
 	
-	public void applySettings(double alpha, int beta, double radius)
+	public Mat gaussianBlur(Mat image, Size ksize)
+	{
+		if(ksize.height>0 || ksize.width>0 && (ksize.width > 0 && ksize.width % 2 == 1 && ksize.height > 0 && ksize.height % 2 == 1))
+		{
+			Mat newImage = new Mat(originalImage.size(), originalImage.type());
+			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+			System.out.println("gaussian radius: "+ksize);
+			Imgproc.GaussianBlur(image, newImage, ksize, 0, 0); //sigmaX and sigmaY are calculated using the kernel size
+			return newImage;
+		}
+		return image;
+	}
+	
+	public void applySettings(double alpha, int beta, double radius, double gaussRadius)
 	{
 		Mat image = setContrast(originalImage, alpha);
 		image = setBrightness(image, beta);
-		Size ksize = new Size(radius, radius);
-		image = boxFilter(image, ksize);
+		Size boxKsize = new Size(radius, radius);
+		image = boxFilter(image, boxKsize);
+		Size gaussKsize = new Size(gaussRadius, gaussRadius);
+		image = gaussianBlur(image, gaussKsize);
 		setChanged();
 		notifyObservers(matToBufferedImage(image));
 	}

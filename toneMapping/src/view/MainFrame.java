@@ -48,6 +48,8 @@ public class MainFrame extends JFrame implements Observer
     private JSlider contrastSlider;
     private JLabel boxFliterlabel;
     private JSlider boxFilterSlider;
+    private JLabel gaussianLabel;
+    private JSlider gaussianSlider;
     
 	public MainFrame() {
 		
@@ -105,7 +107,7 @@ public class MainFrame extends JFrame implements Observer
 		contrastSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 		rightPanel.add(contrastSlider);
 		
-		boxFliterlabel = new JLabel("Box FIlter");
+		boxFliterlabel = new JLabel("Box Filter");
 		rightPanel.add(boxFliterlabel);
 		
 		boxFilterSlider = new JSlider();
@@ -123,6 +125,25 @@ public class MainFrame extends JFrame implements Observer
 		});
 		boxFilterSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 		rightPanel.add(boxFilterSlider);
+		
+		gaussianLabel = new JLabel("Gaussian Filter");
+		rightPanel.add(gaussianLabel);
+		
+		gaussianSlider = new JSlider();
+		gaussianSlider.setValue(0);
+		gaussianSlider.setMinimum(0);
+		gaussianSlider.setMaximum(100);
+		gaussianSlider.setEnabled(false);
+		gaussianSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				double gaussRadius = (double)source.getValue();
+				ctrl.setGaussRadius(gaussRadius);
+				ctrl.applySettings();
+			}
+		});
+		gaussianSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+		rightPanel.add(gaussianSlider);
 		
 		imgIcon = new ImageIcon();
 		image = new JLabel(imgIcon);
@@ -150,6 +171,8 @@ public class MainFrame extends JFrame implements Observer
 		            contrastSlider.setEnabled(true);
 		            contrastSlider.setValue(100);
 		            boxFilterSlider.setEnabled(true);
+		            gaussianSlider.setEnabled(true);
+		            gaussianSlider.setValue(0);
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {

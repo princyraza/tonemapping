@@ -18,6 +18,7 @@ public class Controller {
 	private int beta = 0;
 	private double alpha = 1;
 	private double radius = 0;
+	private double gaussRadius = 0;
 	
 	public Controller()
 	{
@@ -70,26 +71,16 @@ public class Controller {
 	public void setRadius(double radius) {
 		this.radius = radius;
 	}
-
-
-//	public void setBrightness(int beta)
-//	{
-//		toneMapping.setBrightness(beta);
-//	}
-//
-//	public void setContrast(double alpha) {
-//		toneMapping.setContrast(alpha);
-//	}
-//	
-//	public void boxFilter(double radius)
-//	{
-//		Size ksize = new Size(radius, radius);
-//		toneMapping.boxFilter(ksize);
-//	}
-//	
+	
 	public void applySettings()
 	{
-		toneMapping.applySettings(alpha, beta, radius);
+		toneMapping.applySettings(alpha, beta, radius, gaussRadius);
+	}
+
+
+	public void setGaussRadius(double gaussRadius) {
+		this.gaussRadius=gaussRadius;
+		
 	}
 
 }
