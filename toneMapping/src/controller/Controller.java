@@ -1,27 +1,22 @@
 package controller;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
+import model.ToneMapping;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
-
-import view.MainFrame;
-
-import model.*;
 
 public class Controller {
 	private ToneMapping toneMapping;
 	private int beta = 0;
 	private double alpha = 1;
-	private double radius = 0;
+	private double boxRadius = 0;
 	private double gaussRadius = 0;
+	private int medianKSize = 0;
 	
 	public Controller()
 	{
+		//can't read an image without this
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
 	
@@ -63,24 +58,46 @@ public class Controller {
 	}
 
 
-	public double getRadius() {
-		return radius;
+	public double getBoxRadius() {
+		return boxRadius;
 	}
 
 
-	public void setRadius(double radius) {
-		this.radius = radius;
+	public void setBoxRadius(double boxRadius) {
+		this.boxRadius = boxRadius;
 	}
 	
-	public void applySettings()
-	{
-		toneMapping.applySettings(alpha, beta, radius, gaussRadius);
-	}
-
-
-	public void setGaussRadius(double gaussRadius) {
+	public void setGaussRadius(int gaussRadius) {
+		if(gaussRadius % 2 == 0)
+		{
+			gaussRadius++;
+		}
 		this.gaussRadius=gaussRadius;
 		
 	}
+	
+	public int getMedianKSize() {
+		return medianKSize;
+	}
 
+
+	public void setMedianKSize(int medianKSize) {
+		if(medianKSize % 2==0)
+		{
+			medianKSize++; //to get an odd number
+		}
+		this.medianKSize = medianKSize;
+	}
+
+
+	public double getGaussRadius() {
+		return gaussRadius;
+	}
+
+
+	public void applySettings()
+	{
+		toneMapping.applySettings(alpha, beta, boxRadius, gaussRadius, medianKSize);
+	}
+	
 }

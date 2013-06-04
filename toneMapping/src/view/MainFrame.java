@@ -50,6 +50,8 @@ public class MainFrame extends JFrame implements Observer
     private JSlider boxFilterSlider;
     private JLabel gaussianLabel;
     private JSlider gaussianSlider;
+    private JLabel medianLabel;
+    private JSlider medianSlider;
     
 	public MainFrame() {
 		
@@ -119,7 +121,7 @@ public class MainFrame extends JFrame implements Observer
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider)e.getSource();
 				double radius = (double)source.getValue();
-				ctrl.setRadius(radius);
+				ctrl.setBoxRadius(radius);
 				ctrl.applySettings();
 			}
 		});
@@ -137,13 +139,32 @@ public class MainFrame extends JFrame implements Observer
 		gaussianSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider)e.getSource();
-				double gaussRadius = (double)source.getValue();
+				int gaussRadius = source.getValue();
 				ctrl.setGaussRadius(gaussRadius);
 				ctrl.applySettings();
 			}
 		});
 		gaussianSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 		rightPanel.add(gaussianSlider);
+		
+		medianLabel = new JLabel("Median Filter");
+		rightPanel.add(medianLabel);
+		
+		medianSlider = new JSlider();
+		medianSlider.setValue(0);
+		medianSlider.setMinimum(0);
+		medianSlider.setMaximum(100);
+		medianSlider.setEnabled(false);
+		medianSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				int ksize = source.getValue();
+				ctrl.setMedianKSize(ksize);
+				ctrl.applySettings();
+			}
+		});
+		medianSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+		rightPanel.add(medianSlider);
 		
 		imgIcon = new ImageIcon();
 		image = new JLabel(imgIcon);
@@ -173,6 +194,8 @@ public class MainFrame extends JFrame implements Observer
 		            boxFilterSlider.setEnabled(true);
 		            gaussianSlider.setEnabled(true);
 		            gaussianSlider.setValue(0);
+		            medianSlider.setEnabled(true);
+		            medianSlider.setValue(0);
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {

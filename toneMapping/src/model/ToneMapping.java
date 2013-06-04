@@ -119,7 +119,20 @@ public class ToneMapping extends Observable {
 		return image;
 	}
 	
-	public void applySettings(double alpha, int beta, double radius, double gaussRadius)
+	public Mat medianBlur(Mat image, int ksize)
+	{
+		if(ksize % 2 == 1)
+		{
+			Mat newImage = new Mat(originalImage.size(), originalImage.type());
+			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+			System.out.println("median radius: "+ksize);
+			Imgproc.medianBlur(image, newImage, ksize);
+			return newImage;
+		}
+		return image;
+	}
+	
+	public void applySettings(double alpha, int beta, double radius, double gaussRadius, int ksize)
 	{
 		Mat image = setContrast(originalImage, alpha);
 		image = setBrightness(image, beta);
@@ -127,6 +140,7 @@ public class ToneMapping extends Observable {
 		image = boxFilter(image, boxKsize);
 		Size gaussKsize = new Size(gaussRadius, gaussRadius);
 		image = gaussianBlur(image, gaussKsize);
+		image = medianBlur(image,ksize);
 		setChanged();
 		notifyObservers(matToBufferedImage(image));
 	}
