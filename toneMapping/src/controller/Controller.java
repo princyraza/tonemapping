@@ -13,6 +13,7 @@ public class Controller {
 	private double boxRadius = 0;
 	private double gaussRadius = 0;
 	private int medianKSize = 0;
+	private int bilateralDiameter;
 	
 	public Controller()
 	{
@@ -82,7 +83,7 @@ public class Controller {
 
 
 	public void setMedianKSize(int medianKSize) {
-		if(medianKSize % 2==0)
+		if(medianKSize % 2==0 && medianKSize!=0)
 		{
 			medianKSize++; //to get an odd number
 		}
@@ -97,7 +98,13 @@ public class Controller {
 
 	public void applySettings()
 	{
-		toneMapping.applySettings(alpha, beta, boxRadius, gaussRadius, medianKSize);
+		toneMapping.applySettings(alpha, beta, boxRadius, gaussRadius, medianKSize, bilateralDiameter);
+	}
+
+
+	public void setBilateralDiameter(int bilateralDiameter) {
+		this.bilateralDiameter = bilateralDiameter;
+		
 	}
 	
 }

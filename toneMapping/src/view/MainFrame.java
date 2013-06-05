@@ -52,6 +52,8 @@ public class MainFrame extends JFrame implements Observer
     private JSlider gaussianSlider;
     private JLabel medianLabel;
     private JSlider medianSlider;
+    private JLabel bilateralLabel;
+    private JSlider bilateralSlider;
     
 	public MainFrame() {
 		
@@ -166,6 +168,25 @@ public class MainFrame extends JFrame implements Observer
 		medianSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 		rightPanel.add(medianSlider);
 		
+		bilateralLabel = new JLabel("Bilateral Filter");
+		rightPanel.add(bilateralLabel);
+		
+		bilateralSlider = new JSlider();
+		bilateralSlider.setValue(0);
+		bilateralSlider.setMinimum(0);
+		bilateralSlider.setMaximum(100);
+		bilateralSlider.setEnabled(false);
+		bilateralSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				int sigma = source.getValue();
+				ctrl.setBilateralDiameter(sigma);
+				ctrl.applySettings();
+			}
+		});
+		bilateralSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
+		rightPanel.add(bilateralSlider);
+		
 		imgIcon = new ImageIcon();
 		image = new JLabel(imgIcon);
 		imagePanel.add(image);
@@ -196,12 +217,14 @@ public class MainFrame extends JFrame implements Observer
 		            gaussianSlider.setValue(0);
 		            medianSlider.setEnabled(true);
 		            medianSlider.setValue(0);
+		            bilateralSlider.setEnabled(true);
+		            bilateralSlider.setValue(0);
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(MainFrame.this,
-							    "Eggs are not supposed to be green.",
-							    "Inane error",
+							    "Error",
+							    "error",
 							    JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
@@ -209,6 +232,8 @@ public class MainFrame extends JFrame implements Observer
 			}
 		});
 		menu.add(openImage);
+		
+		JMenuItem save = new JMenuItem("save");
 	}
 	
 	
