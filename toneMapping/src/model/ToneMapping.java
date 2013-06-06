@@ -10,7 +10,9 @@ import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 public class ToneMapping extends Observable {
-	
+	/**
+	 * The original image inputed by the user
+	 */
 	private Mat originalImage;
 	
 	public ToneMapping(Mat originalImage)
@@ -18,6 +20,9 @@ public class ToneMapping extends Observable {
 		this.originalImage=originalImage;
 	}
 	
+	/**
+	 * Constructor
+	 */
 	public ToneMapping()
 	{
 		
@@ -72,26 +77,42 @@ public class ToneMapping extends Observable {
 
 	    return image;
 	}
-
+	
+	/**
+	 * Change the brightness of an image with a user inputed beta (brightness) value.
+	 * @param image the original image
+	 * @param beta the brightness value to be applied
+	 * @return the edited image
+	 */
 	public Mat setBrightness(Mat image, int beta) {
 		Mat newImage = new Mat(originalImage.size(), originalImage.type());
 		double alpha=1;
 	    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		System.out.println("beta: "+beta);
 		image.convertTo(newImage, image.type(),alpha,beta);
-//		Highgui.imwrite("newImage.png", newImage);
 		return newImage;
 	}
-
+	
+	/**
+	 * Change the brightness of an image with a user inputed alpha (contrast) value.
+	 * @param image the original image
+	 * @param alpha the contrast value to be applied
+	 * @return the edited image
+	 */
 	public Mat setContrast(Mat image, double alpha) {
 		Mat newImage = new Mat(originalImage.size(), originalImage.type());
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		System.out.println("alpha: "+alpha);
 		image.convertTo(newImage, image.type(),alpha);
-//		Highgui.imwrite("newImage.png", newImage);
 		return newImage;
 	}
 	
+	/**
+	 * Apply the box filter (blur) to an inputed image.
+	 * @param image the inputed image
+	 * @param ksize the size of the box kernel
+	 * @return the edited image
+	 */
 	public Mat boxFilter(Mat image, Size ksize)
 	{
 		if(ksize.height>0 || ksize.width>0)
@@ -106,6 +127,13 @@ public class ToneMapping extends Observable {
 		return image;
 	}
 	
+	/**
+	 * Apply the gaussian filter (blur) to an inputed image. The user input the kernel size.
+	 * sigmaX and sigmaY are calculated using the kernel.
+	 * @param image the inputed image
+	 * @param ksize the size of the gaussian kernel
+	 * @return the edited image
+	 */
 	public Mat gaussianBlur(Mat image, Size ksize)
 	{
 		if(ksize.height>0 || ksize.width>0 && (ksize.width > 0 && ksize.width % 2 == 1 && ksize.height > 0 && ksize.height % 2 == 1))
@@ -119,6 +147,12 @@ public class ToneMapping extends Observable {
 		return image;
 	}
 	
+	/**
+	 * Apply the median filter (blur) to an inputed image.
+	 * @param image the inputed image
+	 * @param ksize the size of the median kernel
+	 * @return the edited image
+	 */
 	public Mat medianBlur(Mat image, int ksize)
 	{
 		if(ksize % 2 == 1)
@@ -132,6 +166,15 @@ public class ToneMapping extends Observable {
 		return image;
 	}
 	
+	/**
+	 * Apply the bilateral filter to an inputed image. 
+	 * The user specifies a sigma value used both for sigmaColor (Filter sigma in the color space) and 
+	 * sigmaSpace (Filter sigma in the coordinate space) .
+	 * The size of the filter is set to 9 as recommended by the javadoc for offline applications.
+	 * @param image the inputed image
+	 * @param sigma the sigma inputed by the user
+	 * @return the edited image
+	 */
 	public Mat bilateralFilter(Mat image, int sigma)
 	{
 		if(sigma > 0)
@@ -141,12 +184,21 @@ public class ToneMapping extends Observable {
 			System.out.println("bilateral sigma: "+sigma);
 			int sigmaColor = sigma;
 			int sigmaSpace = sigma;
-			Imgproc.bilateralFilter(image, newImage, 9, sigmaColor, sigmaSpace); //diameter = 9 as recommended for offline application, sigmas are the defined by the user 
+			Imgproc.bilateralFilter(image, newImage, 9, sigmaColor, sigmaSpace); //diameter = 9 as recommended for offline application, sigmas are defined by the user 
 			return newImage;
 		}
 		return image;
 	}
 	
+	/**
+	 * Apply brightness, contrast, box filter, gaussian filter, median filter and bilateral filter to the original image inputed by the user.
+	 * @param alpha
+	 * @param beta
+	 * @param radius
+	 * @param gaussRadius
+	 * @param ksize
+	 * @param sigma
+	 */
 	public void applySettings(double alpha, int beta, double radius, double gaussRadius, int ksize, int sigma)
 	{
 		Mat image = setContrast(originalImage, alpha);
