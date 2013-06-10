@@ -100,6 +100,11 @@ public class Controller {
 	{
 		toneMapping.applySettings(alpha, beta, boxRadius, gaussRadius, medianKSize, bilateralDiameter);
 	}
+	
+	public void brushStroke(int x, int y, int width, int height)
+	{
+		toneMapping.brushStroke(x,y,width,height);
+	}
 
 
 	public void setBilateralDiameter(int bilateralDiameter) {

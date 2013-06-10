@@ -5,6 +5,9 @@ import java.util.Observable;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
@@ -209,8 +212,18 @@ public class ToneMapping extends Observable {
 		image = gaussianBlur(image, gaussKsize);
 		image = medianBlur(image,ksize);
 		image = bilateralFilter(image, sigma);
+		
 		setChanged();
 		notifyObservers(matToBufferedImage(image));
+	}
+	
+	public void brushStroke(int x, int y, int width, int height)
+	{
+		Rect roi = new Rect(x, y, width, height);
+//		Mat submat = originalImage.submat(roi);
+		Core.rectangle(originalImage, new Point(roi.x, roi.y), new Point(roi.x + roi.width, roi.y + roi.height), new Scalar(0, 255, 0),Core.FILLED);
+		setChanged();
+		notifyObservers(matToBufferedImage(originalImage));
 	}
 	
 	
