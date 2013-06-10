@@ -45,6 +45,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.event.MouseMotionAdapter;
 
 public class MainFrame extends JFrame implements Observer
 {
@@ -239,6 +240,14 @@ public class MainFrame extends JFrame implements Observer
 		
 		imgIcon = new ImageIcon();
 		image = new JLabel(imgIcon);
+		image.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				Point coord = e.getPoint();
+				System.out.println(coord);
+				ctrl.brushStroke(coord.x, coord.y,brushSize,brushSize);
+			}
+		});
 		image.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {

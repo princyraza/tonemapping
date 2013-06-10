@@ -13,7 +13,7 @@ public class Controller {
 	private double boxRadius = 0;
 	private double gaussRadius = 0;
 	private int medianKSize = 0;
-	private int bilateralDiameter;
+	private int bilateralDiameter = 0;
 	
 	public Controller()
 	{

@@ -18,9 +18,25 @@ public class ToneMapping extends Observable {
 	 */
 	private Mat originalImage;
 	
+	/**
+	 * The image modified by the user
+	 */
+	private Mat workingImage;
+	
+	/**
+	 * Previous value of alpha
+	 */
+	private double previousAlpha;
+	
+	/**
+	 * Previous value of beta
+	 */
+	private int previousBeta;
+	
 	public ToneMapping(Mat originalImage)
 	{
 		this.originalImage=originalImage;
+		this.workingImage = originalImage.clone();
 	}
 	
 	/**
@@ -37,6 +53,17 @@ public class ToneMapping extends Observable {
 
 	public void setOriginalImage(Mat originalImage) {
 		this.originalImage = originalImage;
+		this.workingImage = originalImage.clone();
+		previousAlpha = 1;
+		previousBeta = 0;
+	}
+	
+	public Mat getWorkingImage() {
+		return workingImage;
+	}
+
+	public void setWorkingImage(Mat workingImage) {
+		this.workingImage = workingImage;
 	}
 	
 	/**
@@ -88,7 +115,7 @@ public class ToneMapping extends Observable {
 	 * @return the edited image
 	 */
 	public Mat setBrightness(Mat image, int beta) {
-		Mat newImage = new Mat(originalImage.size(), originalImage.type());
+		Mat newImage = new Mat(workingImage.size(), workingImage.type());
 		double alpha=1;
 	    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		System.out.println("beta: "+beta);
@@ -103,12 +130,13 @@ public class ToneMapping extends Observable {
 	 * @return the edited image
 	 */
 	public Mat setContrast(Mat image, double alpha) {
-		Mat newImage = new Mat(originalImage.size(), originalImage.type());
+		Mat newImage = new Mat(workingImage.size(), workingImage.type());
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		System.out.println("alpha: "+alpha);
 		image.convertTo(newImage, image.type(),alpha);
 		return newImage;
 	}
+	
 	
 	/**
 	 * Apply the box filter (blur) to an inputed image.
@@ -120,7 +148,7 @@ public class ToneMapping extends Observable {
 	{
 		if(ksize.height>0 || ksize.width>0)
 		{
-			Mat newImage = new Mat(originalImage.size(), originalImage.type());
+			Mat newImage = new Mat(workingImage.size(), workingImage.type());
 			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 			System.out.println("box radius:"+ksize);
 			Imgproc.boxFilter(image, newImage, image.depth(), ksize);
@@ -141,7 +169,7 @@ public class ToneMapping extends Observable {
 	{
 		if(ksize.height>0 || ksize.width>0 && (ksize.width > 0 && ksize.width % 2 == 1 && ksize.height > 0 && ksize.height % 2 == 1))
 		{
-			Mat newImage = new Mat(originalImage.size(), originalImage.type());
+			Mat newImage = new Mat(workingImage.size(), workingImage.type());
 			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 			System.out.println("gaussian radius: "+ksize);
 			Imgproc.GaussianBlur(image, newImage, ksize, 0, 0); //sigmaX and sigmaY are calculated using the kernel size
@@ -160,7 +188,7 @@ public class ToneMapping extends Observable {
 	{
 		if(ksize % 2 == 1)
 		{
-			Mat newImage = new Mat(originalImage.size(), originalImage.type());
+			Mat newImage = new Mat(workingImage.size(), workingImage.type());
 			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 			System.out.println("median radius: "+ksize);
 			Imgproc.medianBlur(image, newImage, ksize);
@@ -182,7 +210,7 @@ public class ToneMapping extends Observable {
 	{
 		if(sigma > 0)
 		{
-			Mat newImage = new Mat(originalImage.size(), originalImage.type());
+			Mat newImage = new Mat(workingImage.size(), workingImage.type());
 			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 			System.out.println("bilateral sigma: "+sigma);
 			int sigmaColor = sigma;
@@ -204,14 +232,27 @@ public class ToneMapping extends Observable {
 	 */
 	public void applySettings(double alpha, int beta, double radius, double gaussRadius, int ksize, int sigma)
 	{
-		Mat image = setContrast(originalImage, alpha);
+		Mat image = workingImage;
+		image=setContrast(workingImage, alpha);
 		image = setBrightness(image, beta);
-		Size boxKsize = new Size(radius, radius);
-		image = boxFilter(image, boxKsize);
-		Size gaussKsize = new Size(gaussRadius, gaussRadius);
-		image = gaussianBlur(image, gaussKsize);
-		image = medianBlur(image,ksize);
-		image = bilateralFilter(image, sigma);
+		if(radius>0)
+		{
+			Size boxKsize = new Size(radius, radius);
+			image = boxFilter(image, boxKsize);
+		}
+		if(gaussRadius>0)
+		{
+			Size gaussKsize = new Size(gaussRadius, gaussRadius);
+			image = gaussianBlur(image, gaussKsize);
+		}
+		if(ksize>0)
+		{
+			image = medianBlur(image,ksize);
+		}
+		if(sigma>0)
+		{
+			image = bilateralFilter(image, sigma);
+		}
 		
 		setChanged();
 		notifyObservers(matToBufferedImage(image));
@@ -221,13 +262,10 @@ public class ToneMapping extends Observable {
 	{
 		Rect roi = new Rect(x, y, width, height);
 //		Mat submat = originalImage.submat(roi);
-		Core.rectangle(originalImage, new Point(roi.x, roi.y), new Point(roi.x + roi.width, roi.y + roi.height), new Scalar(0, 255, 0),Core.FILLED);
+		Core.circle(workingImage, new Point(x, y), width, new Scalar(0, 255, 0),Core.FILLED);
+		//Core.rectangle(workingImage, new Point(roi.x, roi.y), new Point(roi.x + roi.width, roi.y + roi.height), new Scalar(0, 255, 0),Core.FILLED);
 		setChanged();
-		notifyObservers(matToBufferedImage(originalImage));
+		notifyObservers(matToBufferedImage(workingImage));
 	}
-	
-	
-	
-	
 
 }
