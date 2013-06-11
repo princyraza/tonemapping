@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.Observable;
 
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -23,20 +24,14 @@ public class ToneMapping extends Observable {
 	 */
 	private Mat workingImage;
 	
-	/**
-	 * Previous value of alpha
-	 */
-	private double previousAlpha;
-	
-	/**
-	 * Previous value of beta
-	 */
-	private int previousBeta;
+	private Mat weight;
 	
 	public ToneMapping(Mat originalImage)
 	{
 		this.originalImage=originalImage;
 		this.workingImage = originalImage.clone();
+		//weight = new Mat(originalImage.size(), originalImage.type());
+		weight = Mat.zeros(originalImage.size(), originalImage.type());
 	}
 	
 	/**
@@ -54,8 +49,7 @@ public class ToneMapping extends Observable {
 	public void setOriginalImage(Mat originalImage) {
 		this.originalImage = originalImage;
 		this.workingImage = originalImage.clone();
-		previousAlpha = 1;
-		previousBeta = 0;
+		weight = Mat.zeros(originalImage.size(), CvType.CV_32FC1);
 	}
 	
 	public Mat getWorkingImage() {
@@ -269,6 +263,8 @@ public class ToneMapping extends Observable {
 	{
 //		Rect roi = new Rect(x, y, width, height);
 //		Mat submat = originalImage.submat(roi);
+		Core.circle(weight, new Point(x, y), width, new Scalar(1),Core.FILLED);
+		System.out.println(weight.dump());
 		Core.circle(workingImage, new Point(x, y), width, new Scalar(0, 255, 0),Core.FILLED);
 		//Core.rectangle(workingImage, new Point(roi.x, roi.y), new Point(roi.x + roi.width, roi.y + roi.height), new Scalar(0, 255, 0),Core.FILLED);
 		setChanged();
