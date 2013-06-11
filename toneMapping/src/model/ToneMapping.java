@@ -258,12 +258,26 @@ public class ToneMapping extends Observable {
 		notifyObservers(matToBufferedImage(image));
 	}
 	
+	/**
+	 * Draw a brush stroke on the image.
+	 * @param x x-coordinate of the stroke
+	 * @param y y-coordinate of the stroke
+	 * @param width width of the stroke (radius for a circle)
+	 * @param height height of the stroke (radius for a circle)
+	 */
 	public void brushStroke(int x, int y, int width, int height)
 	{
-		Rect roi = new Rect(x, y, width, height);
+//		Rect roi = new Rect(x, y, width, height);
 //		Mat submat = originalImage.submat(roi);
 		Core.circle(workingImage, new Point(x, y), width, new Scalar(0, 255, 0),Core.FILLED);
 		//Core.rectangle(workingImage, new Point(roi.x, roi.y), new Point(roi.x + roi.width, roi.y + roi.height), new Scalar(0, 255, 0),Core.FILLED);
+		setChanged();
+		notifyObservers(matToBufferedImage(workingImage));
+	}
+	
+	public void reset()
+	{
+		workingImage = originalImage.clone();
 		setChanged();
 		notifyObservers(matToBufferedImage(workingImage));
 	}

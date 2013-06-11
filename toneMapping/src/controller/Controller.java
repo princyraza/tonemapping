@@ -111,5 +111,11 @@ public class Controller {
 		this.bilateralDiameter = bilateralDiameter;
 		
 	}
+
+
+	public void reset() {
+		toneMapping.reset();
+		
+	}
 	
 }

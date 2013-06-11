@@ -59,7 +59,7 @@ public class MainFrame extends JFrame implements Observer
     private JPanel rightPanel;
     private JLabel brightnessLabel;
     private JPanel buttonPanel;
-    private JButton brushButton;
+    private JButton resetButton;
     private JSlider brightSlider;
     private ImageIcon imgIcon;
     private JLabel image;
@@ -97,14 +97,15 @@ public class MainFrame extends JFrame implements Observer
 		getContentPane().add(rightPanel, BorderLayout.EAST);
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 		
-		brushButton = new JButton();
-		brushButton.addActionListener(new ActionListener() {
+		resetButton = new JButton();
+		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//ctrl.brushStroke();
+				ctrl.reset();
+				resetSliders();
 			}
 		});
-		brushButton.setText("Brush");
-		rightPanel.add(brushButton);
+		resetButton.setText("Reset");
+		rightPanel.add(resetButton);
 		
 		brushSizeLabel = new JLabel("Size of the brush");
 		brushSizeLabel.setAlignmentY(0.0f);
@@ -275,19 +276,7 @@ public class MainFrame extends JFrame implements Observer
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            File file = fc.getSelectedFile();
 		            ctrl.setOriginalImage(file.getAbsolutePath());
-		            brightSlider.setEnabled(true);
-		            brightSlider.setValue(0);
-		            contrastSlider.setEnabled(true);
-		            contrastSlider.setValue(100);
-		            boxFilterSlider.setEnabled(true);
-		            gaussianSlider.setEnabled(true);
-		            gaussianSlider.setValue(0);
-		            medianSlider.setEnabled(true);
-		            medianSlider.setValue(0);
-		            bilateralSlider.setEnabled(true);
-		            bilateralSlider.setValue(0);
-		            brushSizeSlider.setEnabled(true);
-		            brushSizeSlider.setValue(30);
+		            resetSliders();
 		            try {
 						image.setIcon(new ImageIcon(ImageIO.read(file)));
 					} catch (IOException e) {
@@ -315,6 +304,23 @@ public class MainFrame extends JFrame implements Observer
 
 	public void setCtrl(Controller ctrl) {
 		this.ctrl = ctrl;
+	}
+	
+	private void resetSliders()
+	{
+		brightSlider.setEnabled(true);
+		brightSlider.setValue(0);
+        contrastSlider.setEnabled(true);
+        contrastSlider.setValue(100);
+        boxFilterSlider.setEnabled(true);
+        gaussianSlider.setEnabled(true);
+        gaussianSlider.setValue(0);
+        medianSlider.setEnabled(true);
+        medianSlider.setValue(0);
+        bilateralSlider.setEnabled(true);
+        bilateralSlider.setValue(0);
+        brushSizeSlider.setEnabled(true);
+        brushSizeSlider.setValue(30);
 	}
 
 
