@@ -263,8 +263,8 @@ public class ToneMapping extends Observable {
 	{
 //		Rect roi = new Rect(x, y, width, height);
 //		Mat submat = originalImage.submat(roi);
-		Core.circle(weight, new Point(x, y), width, new Scalar(1),Core.FILLED);
-		System.out.println(weight.dump());
+		Core.circle(weight, new Point(x, y), width, new Scalar(1),Core.FILLED); //fill out the weight matrix
+//		System.out.println(weight.dump());
 		Core.circle(workingImage, new Point(x, y), width, new Scalar(0, 255, 0),Core.FILLED);
 		//Core.rectangle(workingImage, new Point(roi.x, roi.y), new Point(roi.x + roi.width, roi.y + roi.height), new Scalar(0, 255, 0),Core.FILLED);
 		setChanged();
